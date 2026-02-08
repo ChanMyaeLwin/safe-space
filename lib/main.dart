@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart'; // TODO: Uncomment this after running 'flutterfire configure'
-import 'screens/home_screen.dart';
+import 'package:provider/provider.dart';
+import 'firebase_options.dart'; 
+import 'screens/landing_page.dart'; // Import LandingPage
+import 'services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // TODO: Run 'flutterfire configure' to generate firebase_options.dart
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   
-  // For now, we can run the app without Firebase to see the UI.
-  // Once you configure Firebase, uncomment the lines above.
-
   runApp(const SafeSpaceApp());
 }
 
@@ -22,16 +20,45 @@ class SafeSpaceApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Safe Space',
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-        useMaterial3: true,
-        scaffoldBackgroundColor: Colors.white,
-        fontFamily: 'Roboto', // Default, but can be customized
+    return MultiProvider(
+      providers: [
+        Provider<AuthService>(create: (_) => AuthService()),
+      ],
+      child: MaterialApp(
+        title: 'Safe Space',
+        theme: ThemeData(
+          // Updated color scheme to match the new logo (Teal/Greenish)
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF009688), // Material Teal 500
+            primary: const Color(0xFF00796B),   // Darker Teal for primary actions
+            secondary: const Color(0xFF4DB6AC), // Lighter Teal for accents
+            surface: Colors.white,
+          ),
+          useMaterial3: true,
+          scaffoldBackgroundColor: const Color(0xFFF5F5F5), // Light Grey background
+          fontFamily: 'Roboto',
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            foregroundColor: Color(0xFF004D40), // Very Dark Teal for text
+            elevation: 0,
+            iconTheme: IconThemeData(color: Color(0xFF004D40)),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF00796B),
+              foregroundColor: Colors.white,
+            ),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xFF00796B),
+            ),
+          ),
+        ),
+        // Switch to LandingPage as the entry point
+        home: const LandingPage(), 
+        debugShowCheckedModeBanner: false,
       ),
-      home: const HomeScreen(),
-      debugShowCheckedModeBanner: false,
     );
   }
 }

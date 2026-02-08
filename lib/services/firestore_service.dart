@@ -41,4 +41,21 @@ class FirestoreService {
       }).toList();
     });
   }
+
+  // Get total user count
+  // This is a naive implementation counting documents in 'users' collection.
+  // Note: Firestore doesn't provide a cheap 'count' operation for large collections without specific aggregation queries.
+  // For a small app, this is fine. For scale, use distributed counters or cloud functions.
+  Future<int> getUserCount() async {
+    try {
+      // In this app structure, users are documents in the 'users' collection
+      // However, we only create the user doc when they first chat or journal.
+      // So this counts active users who have data.
+      final snapshot = await _firestore.collection('users').count().get();
+      return snapshot.count ?? 0;
+    } catch (e) {
+      print('Error getting user count: $e');
+      return 0; 
+    }
+  }
 }
